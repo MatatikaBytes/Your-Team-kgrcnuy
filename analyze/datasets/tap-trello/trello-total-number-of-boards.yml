@@ -1,0 +1,30 @@
+version: datasets/v0.2
+source: tap-trello
+title: Total Boards
+questions: How many boards do i have access to?
+description: |-
+  Total number of boards your account has access to.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_boards",
+    "label": "Total Boards", 
+    "related_table": {
+      "columns": [
+      ],
+      "aggregates": [
+        {"name": "total_boards", "label": "Total Boards", "description": "Total Boards"}
+      ]
+    }
+  }
+visualisation: |-
+  {
+    "chartjs-chart": {
+      "chartType": "treemap"
+    }
+  }
+query: |-
+  SELECT
+    COUNT(*) "trello_boards.total_boards"
+  FROM trello_boards

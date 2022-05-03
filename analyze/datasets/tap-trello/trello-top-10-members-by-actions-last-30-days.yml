@@ -1,0 +1,44 @@
+version: datasets/v0.2
+source: tap-trello
+title: Top 10 Members By Actions - Last 30 Days
+questions: Who are the most active members during the last 30 days?
+description: |-
+  Top 10 members by activity for the last 30 days.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_actions",
+    "label": "Top 10 Members By Actions - Last 30 Days", 
+    "related_table": {
+      "columns": [
+        {"name": "member_name", "label": "Member", "description": "Member"}
+      ],
+      "aggregates": [
+        {"name": "total_actions", "label": "Total Actions", "description": "Total Actions"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "y": {
+            "beginAtZero": true
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    COUNT(DISTINCT(id_action)) "trello_actions.total_actions"
+    , full_name "trello_actions.member_name"
+  FROM trello_actions
+  LEFT JOIN trello_members ON trello_members.id_member = trello_actions.id_member_creator
+  WHERE full_name IS NOT NULL
+  AND trello_actions.date::date >= current_date - interval '30 day'
+  GROUP BY full_name
+  ORDER BY count(distinct(id_action)) DESC
+  LIMIT 10

@@ -1,0 +1,42 @@
+version: datasets/v0.2
+source: tap-trello
+title: Total Cards In Each Board
+questions: Whats the number of cards in each of my boards?
+description: |-
+  Total cards in each board.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_cards",
+    "label": "Total Cards In Each Board", 
+    "related_table": {
+      "columns": [
+        {"name": "board_name", "label": "Board Name", "description": "Board Name"}
+      ],
+      "aggregates": [
+        {"name": "total_cards", "label": "Total Cards", "description": "Total Cards"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "y": {
+            "beginAtZero": true
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    COUNT(DISTINCT(id_card)) "trello_cards.total_cards"
+    , trello_boards.name "trello_cards.board_name"
+  FROM trello_cards
+  LEFT JOIN trello_boards ON trello_boards.id_board = trello_cards.id_board
+  WHERE dbt_valid_to IS NULL
+  GROUP BY "trello_cards.board_name"
+  ORDER BY "trello_cards.total_cards" DESC

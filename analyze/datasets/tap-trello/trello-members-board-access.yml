@@ -1,0 +1,30 @@
+version: datasets/v0.2
+source: tap-trello
+title: Member Board Access
+questions: What trello members have access to which board?
+description: |-
+  Table of members and boards they have access to.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_members",
+    "label": "Member Board Access", 
+    "related_table": {
+      "columns": [
+        {"name": "full_name", "label": "Full Name", "description": "Full Name"}, 
+        {"name": "username", "label": "Username", "description": "Username"},
+        {"name": "board_name", "label": "Board Name", "description": "Board Name"}
+      ]
+    }
+  }
+visualisation: '{"html-table": {}}'
+query: |-
+  SELECT
+    full_name "trello_members.full_name"
+    , username "trello_members.username"
+    , trello_boards.name "trello_members.board_name"
+  FROM trello_members
+  LEFT JOIN trello_boards ON trello_boards.id_board = trello_members.id_board 
+  WHERE is_deleted = False
+  ORDER BY "trello_members.board_name", "trello_members.full_name"

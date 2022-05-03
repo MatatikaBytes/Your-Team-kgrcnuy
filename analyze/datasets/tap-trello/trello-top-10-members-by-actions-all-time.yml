@@ -1,0 +1,43 @@
+version: datasets/v0.2
+source: tap-trello
+title: Top 10 Members By Actions - All Time
+questions: Who are the most active members of all time?
+description: |-
+  Top 10 members by activity, all time.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_actions",
+    "label": "Top 10 Members By Actions - All Time", 
+    "related_table": {
+      "columns": [
+        {"name": "member_name", "label": "Member", "description": "Member"}
+      ],
+      "aggregates": [
+        {"name": "total_actions", "label": "Total Actions", "description": "Total Actions"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "y": {
+            "beginAtZero": true
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    COUNT(DISTINCT(id_action)) "trello_actions.total_actions"
+    , full_name "trello_actions.member_name"
+  FROM trello_actions
+  LEFT JOIN trello_members ON trello_members.id_member = trello_actions.id_member_creator
+  WHERE full_name IS NOT NULL
+  GROUP BY full_name
+  ORDER BY count(distinct(id_action)) DESC
+  LIMIT 10

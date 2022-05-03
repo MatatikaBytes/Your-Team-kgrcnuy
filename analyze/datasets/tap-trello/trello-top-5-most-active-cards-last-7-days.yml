@@ -1,0 +1,44 @@
+version: datasets/v0.2
+source: tap-trello
+title: Top 5 Active Cards For The Last 7 Days
+questions: What were the most active cards for the last 7 days?
+description: |-
+  Top 5 Trello cards by activity for for the last 7 days.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_actions",
+    "label": "Top 5 Active Cards For The Last 7 Days", 
+    "related_table": {
+      "columns": [
+        {"name": "card_name", "label": "Card Name", "description": "Card Name"}
+      ],
+      "aggregates": [
+        {"name": "total_actions", "label": "Total Actions", "description": "Total Actions"}
+      ]
+    }
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "y": {
+            "beginAtZero": true
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    COUNT(*) "trello_actions.total_actions"
+    , trello_cards.name "trello_actions.card_name"
+  FROM trello_actions
+  LEFT JOIN trello_cards ON trello_cards.id_card = trello_actions.data_card_id
+  WHERE trello_cards.name IS NOT NULL
+  AND trello_actions.date::date >= current_date - interval '7 day'
+  GROUP BY "trello_actions.card_name"
+  ORDER BY "trello_actions.total_actions" DESC
+  LIMIT 5

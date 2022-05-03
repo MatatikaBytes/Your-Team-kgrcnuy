@@ -1,0 +1,43 @@
+version: datasets/v0.2
+source: tap-trello
+title: Members Per Board
+questions: What is the number of members with access to each board?
+description: |-
+  Total number of members per Trello board.
+
+  #trello
+metadata: |-
+  {
+    "name": "trello_members",
+    "label": "Members Per Board", 
+    "related_table": {
+      "columns": [
+        {"name": "board_name", "label": "Board Name", "description": "Board Name"}
+      ],
+      "aggregates": [
+        {"name": "total_members", "label": "Total Members", "description": "Total Members"}
+      ]
+    },
+    "links": [{"dataset": "trello-members-board-access"}]
+  }
+visualisation: |-
+  {"chartjs-chart": 
+    {"chartType": "bar", 
+      "options": {
+        "scales": {
+          "y": {
+            "beginAtZero": true
+          }
+        }
+      }
+    }
+  }
+query: |-
+  SELECT
+    COUNT(DISTINCT(id_member)) "trello_members.total_members"
+    , trello_boards.name "trello_members.board_name"
+  FROM trello_members
+  LEFT JOIN trello_boards ON trello_boards.id_board = trello_members.id_board
+  WHERE is_deleted = False
+  GROUP BY "trello_members.board_name"
+  ORDER BY "trello_members.total_members" DESC
