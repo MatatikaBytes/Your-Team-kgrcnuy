@@ -1,3 +1,19 @@
 version: 1
 send_anonymous_usage_stats: true
 project_id: f88ed2a5-f300-44bc-8310-ba62ed4c74f4
+plugins:
+  extractors:
+  - name: tap-trello
+    variant: meltano
+    pip_url: git+https://github.com/Matatika/tap-trello@v0.3.0
+  transforms:
+  - name: dbt-tap-trello
+    pip_url: https://github.com/Matatika/dbt-tap-trello@v0.3.0
+  transformers:
+  - name: dbt
+    pip_url: dbt==0.20.2
+  files:
+  - name: dbt
+    pip_url: git+https://github.com/Matatika/files-dbt@v0.20.x.1
+  - name: analyze-trello
+    pip_url: git+https://github.com/Matatika/analyze-trello@v0.4.0
