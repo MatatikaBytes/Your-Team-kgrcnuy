@@ -6,6 +6,10 @@ plugins:
   - name: tap-trello
     variant: meltano
     pip_url: git+https://github.com/Matatika/tap-trello@v0.3.0
+  loaders:
+  - name: target-postgres--transferwise
+    variant: transferwise
+    pip_url: git+https://github.com/Matatika/pipelinewise-target-postgres@v0.1.0
   transforms:
   - name: dbt-tap-trello
     pip_url: https://github.com/Matatika/dbt-tap-trello@v0.3.0
